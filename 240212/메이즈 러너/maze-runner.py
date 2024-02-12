@@ -26,10 +26,11 @@ def move(_):
             if m == dist(nx, ny, outX, outY) and MAP[pos[0]][pos[1]] < 1: continue
             m = dist(nx, ny, outX, outY)
             pos = [nx, ny]
-        if MAP[pos[0]][pos[1]] < 1:
-            scores[n] += 1
+        if MAP[pos[0]][pos[1]] < 1: scores[n] += 1
         else: pos = [x,y]
         nextPos.append(pos)
+    #print(nextPos)
+    #print(participants)
     for x, y in participants:
         if x < 0: continue
         MAP[x][y] = 0
@@ -48,12 +49,13 @@ def findRect():
                 for di in range(n):
                     for dj in range(n):
                         if MAP[i+di][j+dj] < 0: flag |= 1
-                        if i+di == outX and j+dj == outY: flag |= 2
+                        elif i+di == outX and j+dj == outY: flag |= 2
                 if flag == 3: return (i,j, n)
     return (0,0,0)
 def rotate():
     x, y, n = findRect()
     t = [[0]*n for _ in range(n)]
+    newP = [[x,y] for x, y in participants]
     X, Y = outX, outY
     for i in range(n):
         for j in range(n):
@@ -61,12 +63,14 @@ def rotate():
                 MAP[x+i][y+j] -=1
             elif MAP[x+i][y+j] < 0:
                 for k in range(M):
-                    if participants[k] == [x+i,y+j]: participants[k] = [x+j, y+n-1-i]
+                    if participants[k] == [x+i,y+j]: newP[k] = [x+j, y+n-1-i]
             elif x+i == outX and y+j == outY: X, Y = x+j, y+n-1-i
             t[j][n-1-i] = MAP[x+i][y+j]
     for i in range(n):
         for j in range(n):
             MAP[x+i][y+j] = t[i][j]
+    for k in range(M):
+        participants[k] = newP[k]
     return X, Y
 for k in range(K):
     move(k)
