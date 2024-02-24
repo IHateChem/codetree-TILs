@@ -43,11 +43,11 @@ def lose(p): #2-2-2에플레이어가 무조건 이동한다는 보장이 있나
         nx, ny = x+dx, y+dy
         if inbound(nx,ny) and find(nx, ny) == None:
             players[p] = (nx,ny,(d+i)%4,s)
-            if MAP[nx][ny] and max(MAP[nx][ny]) > guns[i]:
-                t = guns[i]
-                guns[i] = max(MAP[nx][ny])
+            if MAP[nx][ny] and max(MAP[nx][ny]) > guns[p]:
+                t = guns[p]
+                guns[p] = max(MAP[nx][ny])
                 MAP[nx][ny].append(t)
-                MAP[nx][ny].remove(guns[i])
+                MAP[nx][ny].remove(guns[p])
             break
 
 def move(i):
