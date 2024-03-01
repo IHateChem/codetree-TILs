@@ -49,13 +49,16 @@ def findLaserRoot(start, end):
     return path
 
 def laserAttack(path, start, end):
+    attackRelatedNodes.add(start)
+    attackRelatedNodes.add(end)
     end_x, end_y = end
     start_x, start_y = start
     ap = MAP[start_x][start_y]
     MAP[end_x][end_y] -= ap
-    for x,y in getVisitedNodeesfromPath(end, path)[1:-1]:
+    path = getVisitedNodeesfromPath(end, path)
+    for x,y in path[1:-1]:
         MAP[x][y] -= ap//2
-    for x,y in getVisitedNodeesfromPath(end, path): attackRelatedNodes.add((x,y))
+        attackRelatedNodes.add((x,y))
 
 def artillery(start, end):
     attackRelatedNodes.add(start)
@@ -89,7 +92,7 @@ def maintainCanon():
 
 for k in range(K):
     start, end = getAttackerAndDefender()
-    if start == end: break
+    if start == end: break 
     attackTime[start[0]][start[1]] = k + 1
     MAP[start[0]][start[1]] += N + M
     path = findLaserRoot(start, end)
