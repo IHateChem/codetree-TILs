@@ -93,7 +93,9 @@ for k in range(K):
     MAP[start[0]][start[1]] += N + M
     path = findLaserRoot(start, end)
     attack(path, start, end)
-    artillery
+    maintainCanon()
+
+
 t = 0
 for i in range(N):
     for j in range(M):
