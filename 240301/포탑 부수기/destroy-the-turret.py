@@ -7,6 +7,7 @@ canons = [(i,j) for i in range(N) for j in range(M) if MAP[i][j]]
 attackTime = [[0]*M for _ in range(N)]
 directions = ((0,1), (1,0), (0,-1), (-1,0))
 attackRelatedNodes = set()
+canHash = {}
 
 def getAttackerAndDefender():
     minAttackPoint = (50000, 0, 0, 0, (0, 0)) # 공격력, 마지막 공격시간, 행열 합, 열, (행, 열)
@@ -18,6 +19,7 @@ def getAttackerAndDefender():
     return minAttackPoint[-1], maxAttackPoint[-1] #공격자, 방어자
 
 def getVisitedNodeesfromPath(pos, path):
+    if (pos, path) in canHash: return canHash[(pos, path)]
     visited = [pos]
     for d in path[::-1]:
         x, y = pos
@@ -26,25 +28,26 @@ def getVisitedNodeesfromPath(pos, path):
         ny = (y - dy) % M
         visited.append((nx, ny))
         pos = (nx, ny)
+    canHash[(pos, path)] = visited
     return visited
 
 def findLaserRoot(start, end):
-    q = [([], start)]
+    q = [((), start)]
     t =  []
     while q:
         path, pos = heapq.heappop(q)
-        if pos == end: break
         x,y = pos
+        visited = getVisitedNodeesfromPath(pos, path)
+        if pos == end: break
         for d, (dx,dy) in enumerate(directions):
             nx = (x + dx) % N
             ny = (y + dy) % M
-            if not MAP[nx][ny]: continue
-            heapq.heappush(t, ([i for i in path] + [d], (nx, ny)))
+            if not MAP[nx][ny] or (nx, ny) in visited: continue
+            heapq.heappush(t, (tuple([i for i in path] + [d]), (nx, ny)))
         if not q:
             q = t
             t = []
     else: return []
-    visited = getVisitedNodeesfromPath(pos, path)
     return visited
 
 def laserAttack(path, start, end):
