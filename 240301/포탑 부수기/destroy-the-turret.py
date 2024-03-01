@@ -7,7 +7,6 @@ canons = [(i,j) for i in range(N) for j in range(M) if MAP[i][j]]
 attackTime = [[0]*M for _ in range(N)]
 directions = ((0,1), (1,0), (0,-1), (-1,0))
 attackRelatedNodes = set()
-canHash = {}
 
 def getAttackerAndDefender():
     minAttackPoint = (50000, 0, 0, 0, (0, 0)) # 공격력, 마지막 공격시간, 행열 합, 열, (행, 열)
@@ -19,7 +18,6 @@ def getAttackerAndDefender():
     return minAttackPoint[-1], maxAttackPoint[-1] #공격자, 방어자
 
 def getVisitedNodeesfromPath(pos, path):
-    if (pos, path) in canHash: return canHash[(pos, path)]
     visited = [pos]
     for d in path[::-1]:
         x, y = pos
@@ -28,27 +26,27 @@ def getVisitedNodeesfromPath(pos, path):
         ny = (y - dy) % M
         visited.append((nx, ny))
         pos = (nx, ny)
-    canHash[(pos, path)] = visited
     return visited
 
 def findLaserRoot(start, end):
-    q = [((), start)]
+    q = [([], start)]
     t =  []
+    visited = set()
     while q:
         path, pos = heapq.heappop(q)
+        visited.add(pos)
         x,y = pos
-        visited = getVisitedNodeesfromPath(pos, path)
         if pos == end: break
         for d, (dx,dy) in enumerate(directions):
             nx = (x + dx) % N
             ny = (y + dy) % M
             if not MAP[nx][ny] or (nx, ny) in visited: continue
-            heapq.heappush(t, (tuple([i for i in path] + [d]), (nx, ny)))
+            heapq.heappush(t, ([i for i in path] + [d], (nx, ny)))
         if not q:
             q = t
             t = []
     else: return []
-    return visited
+    return path
 
 def laserAttack(path, start, end):
     attackRelatedNodes.add(start)
@@ -57,6 +55,7 @@ def laserAttack(path, start, end):
     start_x, start_y = start
     ap = MAP[start_x][start_y]
     MAP[end_x][end_y] -= ap
+    path = getVisitedNodeesfromPath(end, path)
     for x,y in path[1:-1]:
         MAP[x][y] -= ap//2
         attackRelatedNodes.add((x,y))
@@ -71,7 +70,7 @@ def artillery(start, end):
     for dx, dy in ((-1,-1), (-1,0), (-1,1), (0,-1), (0,1), (1,0), (1,-1), (1,1)):
         nx = (x + dx) % N
         ny = (y + dy) % M
-        if (nx, ny) == start or not MAP[nx][ny]: continue
+        if (nx, ny) == start: continue
         attackRelatedNodes.add((nx, ny))
         MAP[nx][ny] -= ap // 2
 
@@ -83,15 +82,15 @@ def attack(path, start, end):
 
 def maintainCanon():
     t = []
-    for i, j in canons:
-        if MAP[i][j] <= 0:
-            MAP[i][j] = 0
-            continue
-        t.append((i,j))
-        if not (i,j) in attackRelatedNodes:
-            MAP[i][j] += 1
+    for i in range(N):
+        for j in range(M):
+            if MAP[i][j] <= 0:
+                MAP[i][j] = 0
+                continue
+            t.append((i,j))
+            if not (i,j) in attackRelatedNodes:
+                MAP[i][j] += 1
     attackRelatedNodes.clear()
-    canHash.clear()
     return t
 
 
