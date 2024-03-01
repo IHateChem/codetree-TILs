@@ -13,7 +13,7 @@ def getAttackerAndDefender():
     for i in range(N):
         for j in range(M):
             if not MAP[i][j]: continue
-            t = (MAP[i][j], attackTime[i][j], i+j, j, (i, j))
+            t = (MAP[i][j], -1 * attackTime[i][j], -i-j, -j, (i, j))
             minAttackPoint = min(minAttackPoint, t)
             maxAttackPoint = max(maxAttackPoint, t)
     return minAttackPoint[-1], maxAttackPoint[-1] #공격자, 방어자
@@ -89,7 +89,7 @@ def maintainCanon():
 
 for k in range(K):
     start, end = getAttackerAndDefender()
-    attackTime[start[0]][start[1]] = k
+    attackTime[start[0]][start[1]] = k + 1
     MAP[start[0]][start[1]] += N + M
     path = findLaserRoot(start, end)
     attack(path, start, end)
