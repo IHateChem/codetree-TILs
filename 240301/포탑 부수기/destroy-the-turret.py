@@ -3,6 +3,7 @@ import heapq
 input = sys.stdin.readline
 N,M,K = map(int,input().split())
 MAP = [list(map(int,input().split())) for _ in range(N)]
+canons = [(i,j) for i in range(N) for j in range(M) if MAP[i][j]]
 attackTime = [[0]*M for _ in range(N)]
 directions = ((0,1), (1,0), (0,-1), (-1,0))
 attackRelatedNodes = set()
@@ -10,12 +11,10 @@ attackRelatedNodes = set()
 def getAttackerAndDefender():
     minAttackPoint = (50000, 0, 0, 0, (0, 0)) # 공격력, 마지막 공격시간, 행열 합, 열, (행, 열)
     maxAttackPoint = (-1, 0, 0, 0, (0, 0)) # 공격력, 마지막 공격시간, 행열 합, 열
-    for i in range(N):
-        for j in range(M):
-            if not MAP[i][j]: continue
-            t = (MAP[i][j], -1 * attackTime[i][j], -i-j, -j, (i, j))
-            minAttackPoint = min(minAttackPoint, t)
-            maxAttackPoint = max(maxAttackPoint, t)
+    for i, j in canons:
+        t = (MAP[i][j], -1 * attackTime[i][j], -i-j, -j, (i, j))
+        minAttackPoint = min(minAttackPoint, t)
+        maxAttackPoint = max(maxAttackPoint, t)
     return minAttackPoint[-1], maxAttackPoint[-1] #공격자, 방어자
 
 def getVisitedNodeesfromPath(pos, path):
@@ -81,12 +80,17 @@ def attack(path, start, end):
         artillery(start, end)
 
 def maintainCanon():
+    t = []
     for i in range(N):
         for j in range(M):
-            if MAP[i][j] < 0: MAP[i][j] = 0
-            if (i,j) in attackRelatedNodes: continue
-            if MAP[i][j]: MAP[i][j] += 1
+            if MAP[i][j] <= 0:
+                MAP[i][j] = 0
+                continue
+            t.append((i,j))
+            if not (i,j) in attackRelatedNodes:
+                MAP[i][j] += 1
     attackRelatedNodes.clear()
+    return t
 
 
 
@@ -97,7 +101,7 @@ for k in range(K):
     MAP[start[0]][start[1]] += N + M
     path = findLaserRoot(start, end)
     attack(path, start, end)
-    maintainCanon()
+    canons = maintainCanon()
 
 
 t = 0
