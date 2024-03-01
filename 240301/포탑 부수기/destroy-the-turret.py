@@ -91,6 +91,7 @@ def maintainCanon():
         if not (i,j) in attackRelatedNodes:
             MAP[i][j] += 1
     attackRelatedNodes.clear()
+    canHash.clear()
     return t
 
 
