@@ -29,21 +29,22 @@ def getVisitedNodeesfromPath(pos, path):
     return visited
 
 def findLaserRoot(start, end):
-    q = [([], start, [start])]
+    q = [([], start)]
     t =  []
     while q:
-        path, pos, visited = heapq.heappop(q)
-        x,y = pos
+        path, pos = heapq.heappop(q)
         if pos == end: break
+        x,y = pos
         for d, (dx,dy) in enumerate(directions):
             nx = (x + dx) % N
             ny = (y + dy) % M
-            if not MAP[nx][ny] or (nx, ny) in visited: continue
-            heapq.heappush(t, ([i for i in path] + [d], (nx, ny), [pos for pos in visited] + [(nx,ny)]))
+            if not MAP[nx][ny]: continue
+            heapq.heappush(t, ([i for i in path] + [d], (nx, ny)))
         if not q:
             q = t
             t = []
     else: return []
+    visited = getVisitedNodeesfromPath(pos, path)
     return visited
 
 def laserAttack(path, start, end):
