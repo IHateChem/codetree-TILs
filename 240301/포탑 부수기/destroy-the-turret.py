@@ -13,7 +13,7 @@ def getAttackerAndDefender():
     for i in range(N):
         for j in range(M):
             if not MAP[i][j]: continue
-            t = (MAP[i][j], -1 * attackTime[i][j], -i-j, -j, (i, j))
+            t = (MAP[i][j], -1 * attackTime[i][j], -i-j, -i, (i, j))
             minAttackPoint = min(minAttackPoint, t)
             maxAttackPoint = max(maxAttackPoint, t)
     return minAttackPoint[-1], maxAttackPoint[-1] #공격자, 방어자
