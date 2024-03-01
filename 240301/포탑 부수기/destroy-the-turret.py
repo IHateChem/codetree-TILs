@@ -3,15 +3,15 @@ import heapq
 input = sys.stdin.readline
 N,M,K = map(int,input().split())
 MAP = [list(map(int,input().split())) for _ in range(N)]
-attackTime = [[0]*N for _ in range(N)]
+attackTime = [[0]*M for _ in range(N)]
 directions = ((0,1), (1,0), (0,-1), (-1,0))
 attackRelatedNodes = set()
 
 def getAttackerAndDefender():
     minAttackPoint = (50000, 0, 0, 0, (0, 0)) # 공격력, 마지막 공격시간, 행열 합, 열, (행, 열)
     maxAttackPoint = (-1, 0, 0, 0, (0, 0)) # 공격력, 마지막 공격시간, 행열 합, 열
-    for i in range(M):
-        for j in range(N):
+    for i in range(N):
+        for j in range(M):
             if not MAP[i][j]: continue
             t = (MAP[i][j], -1 * attackTime[i][j], -i-j, -j, (i, j))
             minAttackPoint = min(minAttackPoint, t)
@@ -78,8 +78,8 @@ def attack(path, start, end):
         artillery(start, end)
 
 def maintainCanon():
-    for i in range(M):
-        for j in range(N):
+    for i in range(N):
+        for j in range(M):
             if MAP[i][j] < 0: MAP[i][j] = 0
             if (i,j) in attackRelatedNodes: continue
             if MAP[i][j]: MAP[i][j] += 1
@@ -97,7 +97,7 @@ for k in range(K):
 
 
 t = 0
-for i in range(M):
-    for j in range(N):
+for i in range(N):
+    for j in range(M):
         t = max(t, MAP[i][j])
 print(t)
