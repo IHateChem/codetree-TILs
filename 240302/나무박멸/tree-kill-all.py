@@ -35,16 +35,21 @@ def breeding(t): #벽, 제초제, 나무 없는 곳으로 주위에 없는 수�
         MAP[x][y] = v
 def calcRemoved(x, y):
     cnt  = MAP[x][y]
+    blocked = set()
     for k in range(1, K+1):
         for dx, dy in ((1,1), (1,-1), (-1, 1), (-1, -1)):
             nx, ny = k*dx + x , k*dy + y
-            if not inbound(nx, ny): continue
+            if not inbound(nx, ny) or (dx, dy) in blocked: continue
+            if MAP[nx][ny] == -1:
+                blocked.add((dx, dy))
+                continue
             if MAP[nx][ny] > 0: cnt += MAP[nx][ny]
     return cnt
 
-def weeding(t): #나무 있는 곳에 뿌리면 K만큼 대각선으로 전파. c년 유지. 원래있었으면 갱신
+def weeding(time): #나무 있는 곳에 뿌리면 K만큼 대각선으로 전파. c년 유지. 원래있었으면 갱신
     pos = (0, 0)
     cnt =  0
+    blocked = set()
     for i in range(N):
         for j in range(N):
             if MAP[i][j] < 1: continue
@@ -53,20 +58,22 @@ def weeding(t): #나무 있는 곳에 뿌리면 K만큼 대각선으로 전파. 
                 cnt = t
                 pos = (i, j)
     x, y = pos
-    herbicide[(x,y)] = t + C
-    MAP[x][y] = 0
+    herbicide[(x,y)] = time + C
     if MAP[x][y] > 0:
         for k in range(1, K+1):
             for dx, dy in ((1,1), (1,-1), (-1, 1), (-1, -1)):
                 nx, ny = k*dx + x , k*dy + y
-                if not inbound(nx, ny): continue
-                herbicide[(nx,ny)] = t + C
+                if not inbound(nx, ny) or (dx, dy) in blocked: continue
+                if MAP[nx][ny] == -1:
+                    blocked.add((dx, dy))
+                    continue
+                herbicide[(nx,ny)] = time + C 
                 MAP[nx][ny] = 0
+    MAP[x][y] = 0
     return cnt
 answer = 0
 for i in range(M):
     growth()
     breeding(i+1)
     answer += weeding(i+1)
-
 print(answer)
