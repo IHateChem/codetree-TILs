@@ -40,7 +40,7 @@ def calcRemoved(x, y):
         for dx, dy in ((1,1), (1,-1), (-1, 1), (-1, -1)):
             nx, ny = k*dx + x , k*dy + y
             if not inbound(nx, ny) or (dx, dy) in blocked: continue
-            if MAP[nx][ny] == -1:
+            if MAP[nx][ny] <= 0:
                 blocked.add((dx, dy))
                 continue
             if MAP[nx][ny] > 0: cnt += MAP[nx][ny]
@@ -64,10 +64,10 @@ def weeding(time): #나무 있는 곳에 뿌리면 K만큼 대각선으로 전�
             for dx, dy in ((1,1), (1,-1), (-1, 1), (-1, -1)):
                 nx, ny = k*dx + x , k*dy + y
                 if not inbound(nx, ny) or (dx, dy) in blocked: continue
-                if MAP[nx][ny] == -1:
+                herbicide[(nx,ny)] = time + C 
+                if MAP[nx][ny] <= 0:
                     blocked.add((dx, dy))
                     continue
-                herbicide[(nx,ny)] = time + C 
                 MAP[nx][ny] = 0
     MAP[x][y] = 0
     return cnt
