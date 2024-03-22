@@ -63,7 +63,7 @@ def move():
                 ti, tj = ni, nj
         if flag:
             flag = True
-            ni, nj = ti, nj
+            ni, nj = ti, tj
         team[team[3]] = (ni,nj)
         q = getPeopleQueue(i,j)
         if flag:
