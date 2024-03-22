@@ -59,7 +59,6 @@ def move():
             ni, nj = ti, tj
         team[team[3]] = (ni,nj)
         q = getPeopleQueue(i,j)
-        print(q)
         if flag:
             t = MAP[ni][nj]
         else:
