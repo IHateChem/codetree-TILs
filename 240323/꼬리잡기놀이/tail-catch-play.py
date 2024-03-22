@@ -31,20 +31,13 @@ def getPeopleQueue(i,j):
     visited = set([(i,j)])
     t = [(i,j)]
     while t:
-        i,j = t.pop()
+        i, j = t.pop()
         q.append((i,j))
         for di, dj in ((1,0),(0,1), (-1,0), (0,-1)):
             ni, nj = i+di, j+ dj
-            if inbound(ni, nj) and not (ni,nj) in visited and not MAP[ni][nj] in (0,4) and abs(MAP[i][j][1]-MAP[ni][nj][1]) > 1:
-                visited.add((ni,nj))
-                t.append((ni, nj))
-                break
-        else:
-            for di, dj in ((1,0),(0,1), (-1,0), (0,-1)):
-                ni, nj = i+di, j+ dj
-                if not inbound(ni, nj) or (ni,nj) in visited or MAP[ni][nj] == 4 or MAP[ni][nj] == 0: continue
-                visited.add((ni,nj))
-                t.append((ni, nj))
+            if not inbound(ni, nj) or (ni,nj) in visited or MAP[ni][nj] == 4 or MAP[ni][nj] == 0 or abs(MAP[ni][nj][1]-MAP[i][j][1])!=1: continue
+            visited.add((ni,nj))
+            t.append((ni, nj))
     return q
             
 
@@ -58,7 +51,7 @@ def move():
             if MAP[ni][nj] == 4:
                 flag = False
                 break
-            if abs(MAP[ni][nj][1] - MAP[i][j][1]) == 1:
+            if abs(MAP[ni][nj][1] - MAP[i][j][1]) != 1:
                 flag = True
                 ti, tj = ni, nj
         if flag:
@@ -66,6 +59,7 @@ def move():
             ni, nj = ti, tj
         team[team[3]] = (ni,nj)
         q = getPeopleQueue(i,j)
+        print(q)
         if flag:
             t = MAP[ni][nj]
         else:
@@ -118,5 +112,5 @@ for Round in range(k):
     if (Round // n) % 4 == 3:
         i, j = 0,  n -1 - Round % n
         di,dj = 1, 0
-    throwBall(i,j,di,dj)
+    throwBall(i,j,di,dj) 
 print(score)
