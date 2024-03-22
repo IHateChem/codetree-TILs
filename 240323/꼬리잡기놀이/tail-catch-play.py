@@ -9,16 +9,22 @@ def findTail(i,j, idx):
     n = 1
     while 1:
         n += 1
+        flag = False
         for di, dj in ((1,0),(0,1), (-1,0), (0,-1)):
             ni, nj = i+di, j+ dj
             if not inbound(ni, nj) or (ni,nj) in visited or MAP[ni][nj] == 4 or MAP[ni][nj] == 0: continue
             if MAP[ni][nj] == 3:
-                MAP[ni][nj] = [idx,n]
-                return (ni, nj), n 
+                flag = True
+                i3, j3 = ni, nj
+                continue
+            flag = False
             MAP[ni][nj] = [idx,n]
             visited.add((ni,nj))
             i,j = ni, nj
             break
+        if flag:
+            MAP[i3][j3] = [idx,n]
+            return (i3, j3), n 
 
 def getPeopleQueue(i,j):
     q = []
@@ -29,27 +35,51 @@ def getPeopleQueue(i,j):
         q.append((i,j))
         for di, dj in ((1,0),(0,1), (-1,0), (0,-1)):
             ni, nj = i+di, j+ dj
-            if not inbound(ni, nj) or (ni,nj) in visited or MAP[ni][nj] == 4 or MAP[ni][nj] == 0: continue
-            visited.add((ni,nj))
-            t.append((ni, nj))
+            if inbound(ni, nj) and not (ni,nj) in visited and not MAP[ni][nj] in (0,4) and abs(MAP[i][j][1]-MAP[ni][nj][1]) > 1:
+                visited.add((ni,nj))
+                t.append((ni, nj))
+                break
+        else:
+            for di, dj in ((1,0),(0,1), (-1,0), (0,-1)):
+                ni, nj = i+di, j+ dj
+                if not inbound(ni, nj) or (ni,nj) in visited or MAP[ni][nj] == 4 or MAP[ni][nj] == 0: continue
+                visited.add((ni,nj))
+                t.append((ni, nj))
     return q
             
 
 def move():
     for team in teams:
+        flag = False
         i,j = team[team[3]]
         for di, dj in ((1,0),(0,1), (-1,0), (0,-1)):
             ni, nj = i+di, j+ dj
-            if not inbound(ni, nj): continue
-            if MAP[ni][nj] == 4: break
+            if not inbound(ni, nj) or MAP[ni][nj] ==0 : continue
+            if MAP[ni][nj] == 4:
+                flag = False
+                break
+            if abs(MAP[ni][nj][1] - MAP[i][j][1]) == 1:
+                flag = True
+                ti, tj = ni, nj
+        if flag:
+            flag = True
+            ni, nj = ti, nj
         team[team[3]] = (ni,nj)
         q = getPeopleQueue(i,j)
+        if flag:
+            t = MAP[ni][nj]
+        else:
+            t = 4
         for p in range(team[2]):
             pi, pj = i, j
             i,j = q[p]
             MAP[ni][nj] = MAP[i][j]
             ni, nj = i, j
-        MAP[ni][nj] = 4
+        i,j = q[0]
+        if flag:
+            pi, pj = q[0]
+            ni, nj = q[-2]
+        MAP[ni][nj] = t
         team[(team[3]+1)%2] = (pi,pj) 
 
 def throwBall(i,j, di, dj):
