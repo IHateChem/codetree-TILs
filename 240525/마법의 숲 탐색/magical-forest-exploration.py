@@ -43,7 +43,7 @@ for _ in range(K):
             r += 1
             c += 1
             d = (d+1)%4
-        elif r <= 1:
+        elif r <= 2:
             clear()
             break
         else:
