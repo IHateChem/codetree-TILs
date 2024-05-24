@@ -2,16 +2,16 @@ import sys
 input = sys.stdin.readline
 directions = [(-1,0), (0,1), (1,0), (0,-1)]
 R,C,K = map(int,input().split())
-MAP = [[0]*C for _ in range(R+2)]
+MAP = [[0]*C for _ in range(R+3)]
 exits = set()
-ScoreMap = [[0]*C for _ in range(R+2)]
+ScoreMap = [[0]*C for _ in range(R+3)]
 def clear():
     exits.clear()
-    for i in range(R+2):
+    for i in range(R+3):
         for j in range(C):
             MAP[i][j] = 0
             ScoreMap[i][j] = 0
-inbound = lambda r,c : 0<=r<R+2 and 0<=c<C
+inbound = lambda r,c : 0<=r<R+3 and 0<=c<C
 def canGoDown(r,c):
     if not inbound(r+2,c): return False
     if not inbound(r+1,c+1) or not inbound(r+1,c-1): return False
@@ -57,14 +57,14 @@ for _ in range(K):
             r += 1
             c += 1
             d = (d+1)%4
-        elif r <= 2:
+        elif r <= 3:
             clear()
             break
         else:
             dr, dc = directions[d]
             exits.add((r+dr, c+dc))
             visited = set()
-            M = dfs(r+dr, c+dc, r)
+            M = dfs(r+dr, c+dc, r-1)
             for dr, dc in ((1,0),(-1,0), (0,1), (0,-1),(0,0)):
                 MAP[r+dr][c+dc] = _+1
                 ScoreMap[r+dr][c+dc] = M
