@@ -34,6 +34,10 @@ def getColor(mid):
             color = node[3]
     return node[4]
 def getScore(mid):
+    pcolor =  nodes[nodes[mid][0]][3]
+    if pcolor and pcolor[0] > nodes[mid][5] and (not nodes[mid][3] or nodes[mid][3][0] < pcolor[0]):
+        nodes[mid][4] = pcolor[1]
+        nodes[mid][3] = pcolor
     totScore, colors = 0, set()
     colors.add(nodes[mid][4])
     for child in nodes[mid][2]:
