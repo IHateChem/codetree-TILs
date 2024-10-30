@@ -76,8 +76,8 @@ for i in range(M):
 
         #동서 연결
         if i > 0:
-            w = westNodeMap[i][j]
-            e = westNodeMap[i-1][j]
+            e = westNodeMap[i][j]
+            w = westNodeMap[i-1][j]
             w.nextN[0] = e
             e.nextN[1] = w
         # 남북 연결
@@ -158,7 +158,7 @@ for i in range(M):
 # 서쪽 면과 연결
 for i in range(M):
     westNodeMap[i][0].nextN[3] = northNodeMap[i][-1]
-    southNodeMap[i][-1].nextN[1] = westNodeMap[i][0]
+    northNodeMap[i][-1].nextN[1] = westNodeMap[i][0]
 
 weirdPositions = [list(map(int, input().split())) for _ in range(F)]
 weirdNodes = []
@@ -169,6 +169,7 @@ for i in range(F):
     NodeMap[x][y].value = 1
     weirdNodes.append(NodeMap[x][y])
 T = 0
+
 def diffusion(t):
     for i in range(F):
         n = weirdNodes[i]
@@ -189,7 +190,7 @@ while nodes:
             nextNode = node.nextN[i]
             if nextNode and nextNode.value == 0 and nextNode.visited == False:
                 t.append(nextNode)
-                nextNode.visited = True
+                nextNode.value = 5
             if nextNode and nextNode.fin:
                 print(T)
                 exit(0)
